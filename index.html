@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+</head>
+<body onload="showQuestion(),showNumber()" style="font-family: 'Noto Sans Thai', sans-serif;">
+    <div class="container-fluid d-flex justify-content-center align-items-center" style="height: 100vh;">
+        <div class="container" style="height: 50vh; width: 30%;">
+            <h1 style="text-align: center;">Math Quiz</h1>
+
+            <div class="row" style="width: 100%;">
+                <div class="col-6" style="text-align: left;"><label id="timeText">เวลา: </label></div>
+                <div class="col-6" style="text-align: right;"><label id="scoreText">คะแนน: </label></div>
+            </div>
+            <form style="text-align: center;" class="bg-light border rounded p-5">
+                <span id="question-container">
+                    <label id="quiz-number"></label>
+                    <label id="question" ></label>
+                    <label >=</label>
+                    <input type="text" id="input" value="0" size="1">  
+                    <input id="checking-btn" type="button" class="btn btn-success" onclick="checkQuestion()" value="ยืนยัน">
+                </span>
+                <br>
+                <br>
+                <input id="start-btn" type="button" class="btn btn-info" onclick="timeCount()" value="เริ่มจับเวลา">
+                <input id="restart-btn" type="button" class="btn btn-warning" onclick="reStart()" value="เริ่มใหม่">
+            </form>
+        </div>
+    </div>
+    <script>
+        var maxQuiz =10;
+        var numberQuiz = 1;
+        var score = 0;
+        var timer;
+        var second = 5;
+        document.querySelector('#input').disabled = true; //ปิดช่องinput
+
+        
+        function showNumber(){
+            document.querySelector('#quiz-number').innerText = numberQuiz+'.) ';
+        }
+
+        function showQuestion(){
+            question.innerText = getQuestion();
+        }
+
+        function showScore(){
+            document.querySelector('#scoreText').innerText = 'คะแนน: '+score+'/'+maxQuiz;
+        }
+
+        function getQuestion(){
+            let oper1 = Math.floor(Math.random()*10 +1);
+            let oper2 = Math.floor(Math.random()*10 +1);
+            let ops = ['+','-','*','/'];
+            let str = '';
+            return str.concat(oper1,ops[Math.floor(Math.random()*ops.length)],oper2);
+        }
+
+        function checkQuestion(){ //function ตรวจคำตอบ
+            let question = document.querySelector('#question').innerText;
+            let input = document.querySelector('#input').value;
+            if(numberQuiz <= maxQuiz){ //ถ้าข้อปัจจุบัน <= ข้อสูงสุด เป็น true
+                if(eval(question) == input){
+                    score++;
+                    showScore();
+                    document.querySelector('#input').disabled = true; //ปิดช่องinput
+                }
+                else{
+                    showScore();
+                    document.querySelector('#input').disabled = true; //ปิดช่องinput
+                }
+            }
+        }
+
+        function nextQuestion(){ //function ในการข้ามไปข้อถัดไป
+            if(numberQuiz < maxQuiz){
+                numberQuiz++;
+                document.querySelector('#input').value = 0;
+                showNumber();
+                showQuestion();
+                showScore();
+                second = 5;
+                timeCount(); 
+            }
+            else{
+                document.querySelector('#input').disabled = true;
+                alert('จบแบบทดสอบ');
+            }
+        }
+
+        function reStart(){ //function ในการเริ่มquizใหม่
+            numberQuiz = 1;
+            score = 0;
+            second = 5;
+            showNumber();
+            showScore();
+            showQuestion();
+            document.querySelector('#input').disabled = false; //เปิดช่องinput
+            document.querySelector('#timeText').innerText = 'เวลา: ' + second + ' s';
+        }
+
+        function counting(){
+            if(!(second == 0)){
+                second--;
+                document.querySelector('#timeText').innerText = 'เวลา: ' + second + ' s';
+            }
+            else{
+                clearInterval(timer);
+                nextQuestion();
+            }
+        }
+
+        function timeCount(){
+            document.querySelector('#input').disabled = false; //เปิดช่องinput
+            timer = setInterval(counting,1000);
+        }
+
+    </script>
+</body>
+</html>
